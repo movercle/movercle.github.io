@@ -441,8 +441,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (isContact) {
                 // In a real site, this would open a contact form
                 const message = lang === 'ko'
-                    ? '관심 가져주셔서 감사합니다! 실제 사이트에서는 문의 양식이 열립니다.'
-                    : 'Thank you for your interest! In a production site, this would open a contact form.';
+                    ? '관심 가져주셔서 감사합니다! \n이 페이지 준비 중입니다.\n조만간 문의 양식을 통해 편리하게 연락하실 수 있도록 하겠습니다.'
+                    : 'Thank you for your interest! \nThis page is currently under preparation.\nWe will soon provide a contact form for your convenience.';
                 alert(message);
             } else if (isExplore) {
                 // Scroll to services section
