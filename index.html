@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="MoverOn - 혁신으로 나아가고, 의도적으로 휴식합니다. LMS, SI, AI 솔루션.">
+    <title>MoverOn - 혁신을 통한 균형</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="mode-on" data-lang="ko">
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-text">MoverOn</span>
+                </div>
+                <div class="header-right">
+                    <div class="language-switcher">
+                        <button class="lang-btn" data-lang="ko" id="langKo">한국어</button>
+                        <button class="lang-btn" data-lang="en" id="langEn">English</button>
+                    </div>
+                    <div class="time-display">
+                        <span class="mode-indicator" id="modeIndicator">ON</span>
+                        <span class="current-time" id="currentTime">00:00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h1 class="hero-title" id="heroTitle" data-i18n="hero.title.on">학습과 기술의 미래를 움직입니다</h1>
+                    <p class="hero-subtitle" id="heroSubtitle" data-i18n="hero.subtitle.on">지능형 솔루션과 혁신적인 플랫폼으로 비즈니스를 변화시킵니다</p>
+                    <div class="hero-cta">
+                        <button class="btn btn-primary" id="ctaButton" data-i18n="hero.cta.on">솔루션 살펴보기</button>
+                    </div>
+                </div>
+                <div class="hero-visual" id="heroVisual">
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ON Mode Content: Services -->
+        <section class="services-section" id="servicesSection">
+            <div class="container">
+                <h2 class="section-title" data-i18n="services.title">우리가 만드는 것</h2>
+                <p class="section-intro" data-i18n="services.intro">
+                    MoverOn은 실질적인 비즈니스 성과를 창출하는 강력한 디지털 솔루션을 전문으로 합니다.
+                    우리의 전문성은 학습 플랫폼, 기업 통합, 최첨단 AI 기술에 걸쳐 있습니다.
+                </p>
+
+                <div class="services-grid">
+                    <!-- Service 1: LMS -->
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M24 4L4 14L24 24L44 14L24 4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M4 34L24 44L44 34" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M4 24L24 34L44 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <h3 class="service-title" data-i18n="services.lms.title">학습 관리 시스템</h3>
+                        <p class="service-description" data-i18n="services.lms.description">
+                            조직과 함께 성장하는 맞춤형 LMS 플랫폼. 고급 분석, 모바일 지원 및 원활한 콘텐츠 전달을 통해
+                            모든 규모의 팀을 위한 매력적이고 직관적인 학습 경험을 만듭니다.
+                        </p>
+                    </div>
+
+                    <!-- Service 2: SI -->
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="6" y="6" width="16" height="16" rx="2" stroke="currentColor" stroke-width="2"/>
+                                <rect x="26" y="6" width="16" height="16" rx="2" stroke="currentColor" stroke-width="2"/>
+                                <rect x="6" y="26" width="16" height="16" rx="2" stroke="currentColor" stroke-width="2"/>
+                                <rect x="26" y="26" width="16" height="16" rx="2" stroke="currentColor" stroke-width="2"/>
+                                <path d="M22 14H26M14 22V26M34 22V26M22 34H26" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <h3 class="service-title" data-i18n="services.si.title">시스템 통합</h3>
+                        <p class="service-description" data-i18n="services.si.description">
+                            기존 시스템을 통합 생태계로 연결합니다. 우리의 SI 솔루션은 레거시 인프라를 현대화하고,
+                            플랫폼 간 데이터 일관성을 보장하며, 운영 효율성을 높이는 원활한 워크플로우를 만듭니다.
+                        </p>
+                    </div>
+
+                    <!-- Service 3: AI -->
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="24" cy="24" r="18" stroke="currentColor" stroke-width="2"/>
+                                <path d="M24 12V24L32 28" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                <circle cx="24" cy="24" r="3" fill="currentColor"/>
+                            </svg>
+                        </div>
+                        <h3 class="service-title" data-i18n="services.ai.title">AI 기반 솔루션</h3>
+                        <p class="service-description" data-i18n="services.ai.description">
+                            인공지능의 힘을 활용하여 프로세스를 자동화하고, 통찰력을 얻으며, 개인화된 경험을 제공합니다.
+                            지능형 챗봇부터 예측 분석까지, 실질적인 비즈니스 과제를 해결하는 AI를 구축합니다.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="contact-cta">
+                    <h3 data-i18n="services.cta.title">함께 전진할 준비가 되셨나요?</h3>
+                    <p data-i18n="services.cta.subtitle">귀사의 비즈니스를 어떻게 변화시킬 수 있을지 함께 논의해보세요</p>
+                    <button class="btn btn-secondary" data-i18n="services.cta.button">문의하기</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- OFF Mode Content: Wellness -->
+        <section class="wellness-section" id="wellnessSection">
+            <div class="container">
+                <h2 class="section-title" data-i18n="wellness.title">재충전할 시간</h2>
+
+                <div class="wellness-content">
+                    <div class="wellness-message">
+                        <p class="wellness-intro" data-i18n="wellness.intro">
+                            MoverOn에서는 최고의 일이 충분히 휴식한 마음에서 나온다고 믿습니다.
+                            우리 팀은 지금 오프라인 상태이며, 내일의 도전을 위해 재충전하고 있습니다.
+                        </p>
+
+                        <div class="wellness-cards">
+                            <div class="wellness-card">
+                                <div class="wellness-icon">🌙</div>
+                                <h3 data-i18n="wellness.rest.title">휴식과 회복</h3>
+                                <p data-i18n="wellness.rest.description">양질의 휴식은 사치가 아니라 창의성과 혁신을 위한 필수 요소입니다.
+                                우리는 팀원들이 연결을 끊고, 잘 자고, 상쾌하게 돌아올 수 있도록 권장합니다.</p>
+                            </div>
+
+                            <div class="wellness-card">
+                                <div class="wellness-icon">🏃</div>
+                                <h3 data-i18n="wellness.exercise.title">운동과 활동</h3>
+                                <p data-i18n="wellness.exercise.description">신체 활동은 정신적 명료함을 촉진합니다. 달리기든, 요가든, 산책이든,
+                                우리는 운동을 문화의 일부로 우선시합니다.</p>
+                            </div>
+
+                            <div class="wellness-card">
+                                <div class="wellness-icon">⚖️</div>
+                                <h3 data-i18n="wellness.balance.title">일과 삶의 균형</h3>
+                                <p data-i18n="wellness.balance.description">균형은 찾는 것이 아니라 만드는 것입니다. 우리는 사람들이
+                                전문적으로나 개인적으로 모두 번영할 수 있는 문화를 구축하는 데 전념하고 있습니다.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="quote-section">
+                        <blockquote class="wellness-quote">
+                            <span data-i18n="wellness.quote">"휴식과 운동, 둘 다 지나치거나 부족하면 해롭다."</span>
+                            <cite data-i18n="wellness.quote.author">— 벤자민 프랭클린</cite>
+                        </blockquote>
+                    </div>
+
+                    <div class="off-contact">
+                        <p data-i18n="wellness.contact.message">ON 시간(오전 8시 - 오후 8시) 동안 메시지에 응답해드리겠습니다.</p>
+                        <button class="btn btn-secondary" data-i18n="wellness.contact.button">메시지 남기기</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>MoverOn</h3>
+                    <p data-i18n="footer.tagline">목적을 가지고 나아가고, 의도를 가지고 휴식합니다.</p>
+                </div>
+                <div class="footer-contact">
+                    <h4 data-i18n="footer.contact.title">연락처</h4>
+                    <p><span data-i18n="footer.contact.email">이메일</span>: movercle@gmail.com</p>
+                    <p><span data-i18n="footer.contact.phone">전화</span>: +82 2-1234-5678</p>
+                    <p data-i18n="footer.contact.location">서울, 대한민국</p>
+                </div>
+                <div class="footer-info">
+                    <h4 data-i18n="footer.hours.title">운영 시간</h4>
+                    <p class="hours-on"><span data-i18n="footer.hours.on">ON: 오전 8:00 - 오후 8:00</span></p>
+                    <p class="hours-off"><span data-i18n="footer.hours.off">OFF: 오후 8:00 - 오전 8:00</span></p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 MoverOn. <span data-i18n="footer.copyright">All rights reserved.</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

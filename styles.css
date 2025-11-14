@@ -1,0 +1,1039 @@
+/* ========================================
+   CSS Variables & Reset
+   ======================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* ON Mode Colors */
+    --on-bg-primary: #ffffff;
+    --on-bg-secondary: #f8f9fa;
+    --on-text-primary: #1a1a1a;
+    --on-text-secondary: #4a5568;
+    --on-accent: #0066ff;
+    --on-accent-hover: #0052cc;
+    --on-card-bg: #ffffff;
+    --on-border: #e2e8f0;
+
+    /* OFF Mode Colors */
+    --off-bg-primary: #0f0f23;
+    --off-bg-secondary: #1a1a2e;
+    --off-text-primary: #e8e8f0;
+    --off-text-secondary: #b8b8d1;
+    --off-accent: #9b59b6;
+    --off-accent-hover: #8e44ad;
+    --off-card-bg: #252541;
+    --off-border: #3a3a5a;
+
+    /* Shared */
+    --transition-speed: 0.5s;
+    --border-radius: 12px;
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.16);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    line-height: 1.6;
+    transition: background-color var(--transition-speed) ease,
+                color var(--transition-speed) ease;
+    overflow-x: hidden;
+}
+
+/* ========================================
+   ON Mode Styles
+   ======================================== */
+
+body.mode-on {
+    background-color: var(--on-bg-primary);
+    color: var(--on-text-primary);
+}
+
+body.mode-on .hero {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+body.mode-on .hero-title,
+body.mode-on .hero-subtitle {
+    color: #ffffff;
+}
+
+body.mode-on .particle {
+    background: rgba(255, 255, 255, 0.6);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+}
+
+body.mode-on .service-card,
+body.mode-on .contact-cta {
+    background: var(--on-card-bg);
+    border: 1px solid var(--on-border);
+    box-shadow: var(--shadow-sm);
+}
+
+body.mode-on .service-icon {
+    color: var(--on-accent);
+}
+
+body.mode-on .btn-primary {
+    background: var(--on-accent);
+    color: #ffffff;
+}
+
+body.mode-on .btn-primary:hover {
+    background: var(--on-accent-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+body.mode-on .btn-secondary {
+    background: transparent;
+    color: var(--on-accent);
+    border: 2px solid var(--on-accent);
+}
+
+body.mode-on .btn-secondary:hover {
+    background: var(--on-accent);
+    color: #ffffff;
+}
+
+body.mode-on .mode-indicator {
+    background: var(--on-accent);
+    color: #ffffff;
+}
+
+/* Hide OFF content in ON mode */
+body.mode-on #wellnessSection {
+    display: none;
+}
+
+/* ========================================
+   OFF Mode Styles
+   ======================================== */
+
+body.mode-off {
+    background-color: var(--off-bg-primary);
+    color: var(--off-text-primary);
+}
+
+body.mode-off .hero {
+    background: linear-gradient(135deg, #2c3e50 0%, #4a3266 100%);
+}
+
+body.mode-off .hero-title,
+body.mode-off .hero-subtitle {
+    color: #e8e8f0;
+}
+
+body.mode-off .particle {
+    background: rgba(155, 89, 182, 0.4);
+    box-shadow: 0 0 20px rgba(155, 89, 182, 0.6);
+    animation: float-gentle 6s ease-in-out infinite;
+}
+
+body.mode-off .wellness-card {
+    background: var(--off-card-bg);
+    border: 1px solid var(--off-border);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+body.mode-off .wellness-icon {
+    font-size: 3rem;
+    filter: brightness(1.2);
+}
+
+body.mode-off .btn-primary {
+    background: var(--off-accent);
+    color: #ffffff;
+}
+
+body.mode-off .btn-primary:hover {
+    background: var(--off-accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(155, 89, 182, 0.4);
+}
+
+body.mode-off .btn-secondary {
+    background: transparent;
+    color: var(--off-accent);
+    border: 2px solid var(--off-accent);
+}
+
+body.mode-off .btn-secondary:hover {
+    background: var(--off-accent);
+    color: #ffffff;
+}
+
+body.mode-off .mode-indicator {
+    background: var(--off-accent);
+    color: #ffffff;
+}
+
+body.mode-off .footer {
+    background: var(--off-bg-secondary);
+    border-top: 1px solid var(--off-border);
+}
+
+body.mode-off .section-title {
+    color: var(--off-text-primary);
+}
+
+body.mode-off .wellness-quote {
+    color: var(--off-text-secondary);
+    border-left-color: var(--off-accent);
+}
+
+/* Hide ON content in OFF mode */
+body.mode-off #servicesSection {
+    display: none;
+}
+
+/* ========================================
+   Layout Components
+   ======================================== */
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 0 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 0 12px;
+    }
+}
+
+/* Header */
+.header {
+    padding: 16px 0;
+    position: sticky;
+    top: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    z-index: 100;
+    transition: background-color var(--transition-speed) ease;
+}
+
+body.mode-off .header {
+    background: rgba(15, 15, 35, 0.95);
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.logo-text {
+    font-size: 1.8rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+body.mode-off .logo-text {
+    background: linear-gradient(135deg, #9b59b6 0%, #e74c3c 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+@media (max-width: 768px) {
+    .header {
+        padding: 12px 0;
+    }
+
+    .logo-text {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-content {
+        gap: 10px;
+    }
+
+    .logo-text {
+        font-size: 1.3rem;
+    }
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.language-switcher {
+    display: flex;
+    gap: 6px;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 4px;
+    border-radius: 8px;
+    transition: background var(--transition-speed) ease;
+}
+
+body.mode-off .language-switcher {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.lang-btn {
+    padding: 6px 12px;
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: inherit;
+    white-space: nowrap;
+}
+
+.lang-btn:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+body.mode-off .lang-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.lang-btn.active {
+    background: var(--on-accent);
+    color: #ffffff;
+}
+
+body.mode-off .lang-btn.active {
+    background: var(--off-accent);
+    color: #ffffff;
+}
+
+.time-display {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    flex-wrap: wrap;
+}
+
+.mode-indicator {
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    transition: all var(--transition-speed) ease;
+    white-space: nowrap;
+}
+
+.current-time {
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+    opacity: 0.8;
+    white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+    .header-right {
+        gap: 10px;
+    }
+
+    .language-switcher {
+        gap: 4px;
+        padding: 3px;
+    }
+
+    .lang-btn {
+        padding: 5px 10px;
+        font-size: 0.75rem;
+    }
+
+    .time-display {
+        gap: 8px;
+        font-size: 0.85rem;
+    }
+
+    .mode-indicator {
+        padding: 4px 12px;
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-right {
+        width: 100%;
+        justify-content: space-between;
+        gap: 8px;
+    }
+
+    .language-switcher {
+        order: 2;
+    }
+
+    .time-display {
+        order: 1;
+        font-size: 0.8rem;
+    }
+
+    .lang-btn {
+        padding: 4px 8px;
+        font-size: 0.7rem;
+    }
+
+    .mode-indicator {
+        padding: 3px 10px;
+        font-size: 0.7rem;
+    }
+
+    .current-time {
+        font-size: 0.8rem;
+    }
+}
+
+/* Hero Section */
+.hero {
+    padding: 80px 0 100px;
+    position: relative;
+    overflow: hidden;
+    transition: background var(--transition-speed) ease;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.hero-title {
+    font-size: 3rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 20px;
+    animation: fadeInUp 0.8s ease;
+}
+
+.hero-subtitle {
+    font-size: 1.3rem;
+    margin-bottom: 40px;
+    opacity: 0.95;
+    animation: fadeInUp 0.8s ease 0.2s backwards;
+}
+
+.hero-cta {
+    animation: fadeInUp 0.8s ease 0.4s backwards;
+}
+
+.hero-visual {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Particle Animation */
+.particle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    opacity: 0.6;
+    animation: float 8s ease-in-out infinite;
+}
+
+.particle:nth-child(1) {
+    top: 20%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.particle:nth-child(2) {
+    top: 60%;
+    left: 80%;
+    animation-delay: 2s;
+}
+
+.particle:nth-child(3) {
+    top: 40%;
+    left: 30%;
+    animation-delay: 4s;
+}
+
+.particle:nth-child(4) {
+    top: 80%;
+    left: 60%;
+    animation-delay: 1s;
+}
+
+.particle:nth-child(5) {
+    top: 30%;
+    left: 90%;
+    animation-delay: 3s;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+    }
+    25% {
+        transform: translate(20px, -20px) scale(1.1);
+    }
+    50% {
+        transform: translate(-15px, -40px) scale(0.9);
+    }
+    75% {
+        transform: translate(15px, -20px) scale(1.05);
+    }
+}
+
+@keyframes float-gentle {
+    0%, 100% {
+        transform: translate(0, 0);
+    }
+    50% {
+        transform: translate(10px, -15px);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Buttons */
+.btn {
+    padding: 14px 32px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.btn:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* Services Section */
+.services-section {
+    padding: 80px 0;
+    animation: fadeIn 0.8s ease;
+}
+
+.section-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.section-intro {
+    text-align: center;
+    font-size: 1.15rem;
+    max-width: 700px;
+    margin: 0 auto 60px;
+    opacity: 0.85;
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    margin-bottom: 60px;
+}
+
+@media (max-width: 768px) {
+    .services-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .services-grid {
+        gap: 20px;
+    }
+}
+
+.service-card {
+    padding: 40px 30px;
+    border-radius: var(--border-radius);
+    transition: all 0.3s ease;
+}
+
+.service-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-lg);
+}
+
+.service-icon {
+    margin-bottom: 20px;
+}
+
+.service-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+.service-description {
+    line-height: 1.7;
+    opacity: 0.85;
+}
+
+.contact-cta {
+    text-align: center;
+    padding: 50px 40px;
+    border-radius: var(--border-radius);
+    margin-top: 40px;
+}
+
+.contact-cta h3 {
+    font-size: 2rem;
+    margin-bottom: 12px;
+}
+
+.contact-cta p {
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+    opacity: 0.8;
+}
+
+/* Wellness Section */
+.wellness-section {
+    padding: 80px 0;
+    animation: fadeIn 0.8s ease;
+}
+
+.wellness-content {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.wellness-intro {
+    font-size: 1.3rem;
+    text-align: center;
+    margin-bottom: 50px;
+    line-height: 1.8;
+}
+
+.wellness-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 30px;
+    margin-bottom: 60px;
+}
+
+@media (max-width: 768px) {
+    .wellness-cards {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .wellness-cards {
+        gap: 20px;
+    }
+}
+
+.wellness-card {
+    padding: 40px 30px;
+    border-radius: var(--border-radius);
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.wellness-card:hover {
+    transform: translateY(-5px);
+}
+
+.wellness-card h3 {
+    font-size: 1.4rem;
+    margin: 20px 0 16px;
+}
+
+.wellness-card p {
+    line-height: 1.7;
+    opacity: 0.85;
+}
+
+.quote-section {
+    margin: 60px 0;
+}
+
+.wellness-quote {
+    font-size: 1.5rem;
+    font-style: italic;
+    text-align: center;
+    padding: 30px;
+    border-left: 4px solid;
+    line-height: 1.6;
+}
+
+.wellness-quote cite {
+    display: block;
+    margin-top: 20px;
+    font-size: 1rem;
+    font-style: normal;
+    opacity: 0.7;
+}
+
+.off-contact {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.off-contact p {
+    font-size: 1.1rem;
+    margin-bottom: 25px;
+    opacity: 0.8;
+}
+
+/* Footer */
+.footer {
+    background: var(--on-bg-secondary);
+    padding: 60px 0 30px;
+    border-top: 1px solid var(--on-border);
+    transition: all var(--transition-speed) ease;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.footer-brand h3 {
+    font-size: 1.5rem;
+    margin-bottom: 12px;
+}
+
+.footer-brand p {
+    opacity: 0.7;
+    line-height: 1.6;
+}
+
+.footer-contact h4,
+.footer-info h4 {
+    margin-bottom: 16px;
+    font-size: 1.1rem;
+}
+
+.footer-contact p,
+.footer-info p {
+    margin-bottom: 8px;
+    opacity: 0.7;
+}
+
+.hours-on {
+    color: #00c853;
+}
+
+.hours-off {
+    color: #9b59b6;
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 30px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    opacity: 0.6;
+}
+
+/* Fade In Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* ========================================
+   Responsive Design
+   ======================================== */
+
+/* Tablet Portrait & Landscape (768px - 1024px) */
+@media (max-width: 1024px) and (min-width: 769px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+    }
+
+    .section-title {
+        font-size: 2.2rem;
+    }
+}
+
+/* Tablet Portrait & Mobile Landscape (481px - 768px) */
+@media (max-width: 768px) {
+    .hero {
+        padding: 50px 0 60px;
+    }
+
+    .hero-title {
+        font-size: 2rem;
+        line-height: 1.3;
+    }
+
+    .hero-subtitle {
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+    }
+
+    .section-intro {
+        font-size: 1.05rem;
+        margin-bottom: 40px;
+    }
+
+    .services-section,
+    .wellness-section {
+        padding: 50px 0;
+    }
+
+    .service-card,
+    .wellness-card {
+        padding: 32px 24px;
+    }
+
+    .contact-cta {
+        padding: 40px 30px;
+    }
+
+    .contact-cta h3 {
+        font-size: 1.6rem;
+    }
+
+    .contact-cta p {
+        font-size: 1rem;
+    }
+
+    .wellness-intro {
+        font-size: 1.15rem;
+        margin-bottom: 40px;
+    }
+
+    .wellness-quote {
+        font-size: 1.2rem;
+        padding: 24px;
+    }
+
+    .footer-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 30px;
+    }
+
+    .footer {
+        padding: 50px 0 25px;
+    }
+}
+
+/* Mobile Portrait (320px - 480px) */
+@media (max-width: 480px) {
+    .hero {
+        padding: 40px 0 50px;
+    }
+
+    .hero-title {
+        font-size: 1.5rem;
+        line-height: 1.3;
+        margin-bottom: 16px;
+    }
+
+    .hero-subtitle {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 32px;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        margin-bottom: 16px;
+    }
+
+    .section-intro {
+        font-size: 0.95rem;
+        margin-bottom: 32px;
+    }
+
+    .services-section,
+    .wellness-section {
+        padding: 40px 0;
+    }
+
+    .service-card,
+    .wellness-card {
+        padding: 24px 16px;
+    }
+
+    .service-title,
+    .wellness-card h3 {
+        font-size: 1.2rem;
+    }
+
+    .service-description,
+    .wellness-card p {
+        font-size: 0.9rem;
+    }
+
+    .btn {
+        padding: 12px 24px;
+        font-size: 0.9rem;
+        width: 100%;
+        max-width: 280px;
+    }
+
+    .contact-cta {
+        padding: 32px 20px;
+    }
+
+    .contact-cta h3 {
+        font-size: 1.3rem;
+    }
+
+    .contact-cta p {
+        font-size: 0.9rem;
+        margin-bottom: 24px;
+    }
+
+    .wellness-intro {
+        font-size: 1rem;
+        margin-bottom: 32px;
+    }
+
+    .wellness-icon {
+        font-size: 2.5rem !important;
+    }
+
+    .wellness-quote {
+        font-size: 1rem;
+        padding: 16px;
+        border-left-width: 3px;
+    }
+
+    .wellness-quote cite {
+        font-size: 0.85rem;
+        margin-top: 12px;
+    }
+
+    .off-contact p {
+        font-size: 0.95rem;
+    }
+
+    .footer {
+        padding: 40px 0 20px;
+    }
+
+    .footer-brand h3 {
+        font-size: 1.3rem;
+    }
+
+    .footer-brand p,
+    .footer-contact p,
+    .footer-info p {
+        font-size: 0.9rem;
+    }
+
+    .footer-contact h4,
+    .footer-info h4 {
+        font-size: 1rem;
+        margin-bottom: 12px;
+    }
+
+    .footer-bottom {
+        font-size: 0.85rem;
+        padding-top: 20px;
+    }
+}
+
+/* Very Small Devices (320px and below) */
+@media (max-width: 375px) {
+    .hero-title {
+        font-size: 1.3rem;
+    }
+
+    .hero-subtitle {
+        font-size: 0.9rem;
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+    }
+
+    .service-card,
+    .wellness-card {
+        padding: 20px 12px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        font-size: 0.85rem;
+    }
+}
+
+/* ========================================
+   Accessibility
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Focus states for keyboard navigation */
+.btn:focus,
+a:focus {
+    outline: 3px solid var(--on-accent);
+    outline-offset: 2px;
+}
+
+body.mode-off .btn:focus,
+body.mode-off a:focus {
+    outline-color: var(--off-accent);
+}
