@@ -1,215 +1,247 @@
 # MoverOn 홈페이지
 
+> **"목적을 가지고 나아가고, 의도를 가지고 휴식합니다."**
+
 시간대별로 변화하는 역동적인 홈페이지 - 일과 삶의 균형을 표현하는 웹사이트
 
-## 프로젝트 개요
+🌐 **Live Site:** [www.moveron.co.kr](https://www.moveron.co.kr)
 
-MoverOn 홈페이지는 시간대에 따라 다른 테마와 콘텐츠를 보여주는 독특한 컨셉의 웹사이트입니다.
+---
 
-### 핵심 컨셉
+## 📋 프로젝트 개요
 
-- **On 시간** (오전 8시 ~ 오후 8시): 전문적이고 활발한 업무 모드
-- **Off 시간** (오후 8시 ~ 다음날 오전 8시): 휴식과 워라밸을 강조하는 모드
+MoverOn 홈페이지는 시간대에 따라 자동으로 테마와 콘텐츠가 전환되는 독특한 컨셉의 웹사이트입니다.
+회사의 철학인 **"일과 삶의 균형"**을 웹사이트 자체가 구현하여, 방문자에게 차별화된 경험을 제공합니다.
 
-## 주요 기능
+### 🎯 핵심 컨셉
 
-### On 타임 (💼 Work Mode)
-- 업무 및 기술 소개
-- 진행 중인 프로젝트 현황
-- 팀 활동 및 성과
-- 전문성을 강조하는 디자인 (블루/그레이 톤)
+- **ON 모드** (오전 8시 ~ 오후 8시): 전문적이고 활발한 업무 모드
+  - 비즈니스 솔루션 및 기술 소개
+  - LMS, SI, AI 서비스 상세 정보
+  - 전문성을 강조하는 디자인 (블루/퍼플 그라데이션)
 
-### Off 타임 (🌙 Life Mode)
-- 운동 및 휴식 관련 콘텐츠
-- 팀의 워라밸 문화 소개
-- 건강한 라이프스타일 공유
-- 편안한 디자인 (따뜻한 톤)
+- **OFF 모드** (오후 8시 ~ 다음날 오전 8시): 휴식과 워라밸을 강조하는 모드
+  - 팀의 웰니스 문화 소개
+  - 일과 삶의 균형에 대한 메시지
+  - 편안한 디자인 (다크 테마, 퍼플 톤)
 
-## 기술 스택
+---
 
-- HTML5
-- CSS3 (반응형 디자인)
-- Vanilla JavaScript (시간대별 테마 전환)
-- LocalStorage (사용자 설정 저장)
+## ✨ 주요 기능
 
-## 파일 구조
+### 🌅 ON 모드 (Work Mode)
+- **서비스 소개**: LMS, 시스템 통합(SI), AI 솔루션
+- **전문적인 디자인**: 밝은 배경, 선명한 색상, 역동적인 애니메이션
+- **비즈니스 중심 콘텐츠**: 솔루션 탐색, 프로젝트 문의
+- **인터랙티브 요소**: 호버 효과, 카드 애니메이션, 파티클 효과
+
+### 🌙 OFF 모드 (Life Mode)
+- **웰니스 메시지**: 휴식, 운동, 일과 삶의 균형
+- **편안한 디자인**: 다크 모드, 부드러운 색상, 차분한 애니메이션
+- **인간 중심 콘텐츠**: 팀 문화, 워라밸 철학
+- **감성적 요소**: 명언, 웰니스 카드, 부드러운 전환 효과
+
+### 🌐 다국어 지원
+- **한국어 (기본)**: 국내 사용자를 위한 기본 언어
+- **영어**: 글로벌 사용자를 위한 영문 지원
+- **실시간 전환**: 언어 변경 시 즉시 반영
+- **LocalStorage 저장**: 사용자 언어 설정 기억
+
+### 📱 반응형 디자인
+- **모바일 최적화**: 320px ~ 480px
+- **태블릿 지원**: 481px ~ 768px
+- **데스크톱**: 769px ~ 1024px+
+- **유연한 레이아웃**: 모든 화면 크기에서 최적의 경험
+
+---
+
+## 🛠 기술 스택
+
+### Frontend
+- **HTML5**: 시맨틱 마크업, SEO 최적화
+- **CSS3**:
+  - CSS Variables (테마 관리)
+  - Flexbox & Grid (레이아웃)
+  - Animations & Transitions (부드러운 효과)
+  - Media Queries (반응형 디자인)
+- **Vanilla JavaScript (ES6+)**:
+  - 시간 기반 모드 전환
+  - 다국어 지원 (i18n)
+  - 인터랙티브 애니메이션
+  - LocalStorage 활용
+
+### 성능 최적화
+- **CSS Transform**: GPU 가속 애니메이션
+- **Intersection Observer**: 스크롤 애니메이션 최적화
+- **Lazy Loading**: 이미지 및 콘텐츠 지연 로딩
+- **Debouncing**: 스크롤 이벤트 최적화
+
+### 접근성
+- **ARIA Labels**: 스크린 리더 지원
+- **Keyboard Navigation**: 키보드 접근성
+- **Focus States**: 명확한 포커스 표시
+- **Reduced Motion**: 애니메이션 감소 옵션 지원
+
+---
+
+## 📁 파일 구조
 
 ```
-moveron_home/
+movercle.github.io/
 ├── index.html              # 메인 HTML 파일
-├── css/
-│   ├── common.css         # 공통 스타일
-│   ├── on-theme.css       # On 타임 테마
-│   └── off-theme.css      # Off 타임 테마
-├── js/
-│   ├── main.js            # 메인 JavaScript
-│   └── theme-switcher.js  # 테마 전환 로직
+├── styles.css              # 통합 스타일시트 (ON/OFF 모드 포함)
+├── script.js               # 메인 JavaScript (모드 전환, i18n, 애니메이션)
+├── favicon.ico             # 파비콘
+├── CNAME                   # 커스텀 도메인 설정
 ├── images/
-│   ├── on/                # On 타임 이미지
-│   └── off/               # Off 타임 이미지
-├── content.md             # 콘텐츠 기획 문서
-└── README.md              # 이 파일
+│   └── og-image.jpg        # Open Graph 이미지 (소셜 미디어 공유)
+├── content.md              # 콘텐츠 기획 문서
+├── DESIGN_CONCEPT.md       # 상세 디자인 컨셉 문서
+└── README.md               # 프로젝트 문서 (이 파일)
 ```
 
-## 구현 가이드
+---
 
-### 1. HTML 구조 (index.html)
+## 🚀 시작하기
 
-```html
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MoverOn - 움직이는 삶, 균형있는 일</title>
-    <link rel="stylesheet" href="css/common.css">
-    <link rel="stylesheet" href="css/on-theme.css" id="theme-style">
-</head>
-<body>
-    <!-- 헤더 -->
-    <header>
-        <nav>
-            <div class="logo">MoverOn</div>
-            <div class="time-indicator">
-                <span id="current-mode">On</span>
-                <span id="current-time"></span>
-            </div>
-        </nav>
-    </header>
+### 로컬 개발 환경 설정
 
-    <!-- 메인 섹션 -->
-    <main id="main-content">
-        <!-- On/Off 시간대별로 다른 콘텐츠 표시 -->
-    </main>
+1. **저장소 클론**
+   ```bash
+   git clone https://github.com/movercle/movercle.github.io.git
+   cd movercle.github.io
+   ```
 
-    <!-- 푸터 -->
-    <footer>
-        <p>&copy; 2024 MoverOn. All rights reserved.</p>
-    </footer>
+2. **로컬 서버 실행**
 
-    <script src="js/theme-switcher.js"></script>
-    <script src="js/main.js"></script>
-</body>
-</html>
-```
+   **Python 사용:**
+   ```bash
+   # Python 3
+   python -m http.server 8000
+   ```
 
-### 2. 테마 전환 로직 (js/theme-switcher.js)
+   **Node.js 사용:**
+   ```bash
+   # http-server 설치 (최초 1회)
+   npm install -g http-server
 
-```javascript
-// 현재 시간 확인 및 테마 적용
+   # 서버 실행
+   http-server -p 8000
+   ```
+
+   **VS Code Live Server 사용:**
+   - VS Code에서 `index.html` 우클릭
+   - "Open with Live Server" 선택
+
+3. **브라우저에서 확인**
+   ```
+   http://localhost:8000
+   ```
+
+### 배포
+
+이 프로젝트는 **GitHub Pages**를 통해 자동 배포됩니다.
+
+- **배포 URL**: https://www.moveron.co.kr
+- **자동 배포**: `main` 브랜치에 푸시 시 자동 배포
+- **커스텀 도메인**: `CNAME` 파일을 통해 설정
+
+---
+
+## 💡 핵심 구현 로직
+
+### 1. 시간 기반 모드 전환
+
+<augment_code_snippet path="script.js" mode="EXCERPT">
+````javascript
 function getCurrentMode() {
     const now = new Date();
-    const hour = now.getHours();
+    const currentHour = now.getHours();
 
-    // 8시(08:00) ~ 20시(20:00)는 On, 그 외는 Off
-    return (hour >= 8 && hour < 20) ? 'on' : 'off';
-}
-
-function applyTheme() {
-    const mode = getCurrentMode();
-    const themeStyle = document.getElementById('theme-style');
-    const body = document.body;
-
-    if (mode === 'on') {
-        themeStyle.href = 'css/on-theme.css';
-        body.classList.remove('off-mode');
-        body.classList.add('on-mode');
-        updateContent('on');
+    // 8 AM ~ 8 PM: ON 모드, 그 외: OFF 모드
+    if (currentHour >= 8 && currentHour < 20) {
+        return 'on';
     } else {
-        themeStyle.href = 'css/off-theme.css';
-        body.classList.remove('on-mode');
-        body.classList.add('off-mode');
-        updateContent('off');
-    }
-
-    updateTimeDisplay();
-}
-
-function updateTimeDisplay() {
-    const now = new Date();
-    const timeElement = document.getElementById('current-time');
-    const modeElement = document.getElementById('current-mode');
-
-    timeElement.textContent = now.toLocaleTimeString('ko-KR');
-    modeElement.textContent = getCurrentMode() === 'on' ? 'On' : 'Off';
-}
-
-// 페이지 로드 시 및 매분마다 체크
-document.addEventListener('DOMContentLoaded', () => {
-    applyTheme();
-    setInterval(applyTheme, 60000); // 1분마다 체크
-});
-```
-
-### 3. CSS 테마 예시
-
-**On 테마 (css/on-theme.css)**
-```css
-:root {
-    --primary-color: #2563eb;
-    --secondary-color: #1e40af;
-    --text-color: #1f2937;
-    --bg-color: #f3f4f6;
-}
-
-.on-mode {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-```
-
-**Off 테마 (css/off-theme.css)**
-```css
-:root {
-    --primary-color: #f59e0b;
-    --secondary-color: #d97706;
-    --text-color: #374151;
-    --bg-color: #fef3c7;
-}
-
-.off-mode {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-}
-```
-
-### 4. 콘텐츠 동적 변경 (js/main.js)
-
-```javascript
-function updateContent(mode) {
-    const mainContent = document.getElementById('main-content');
-
-    if (mode === 'on') {
-        mainContent.innerHTML = `
-            <section class="hero">
-                <h1>💼 MoverOn이 움직입니다</h1>
-                <p>전문성과 혁신으로 가치를 창출하는 시간</p>
-            </section>
-            <section class="features">
-                <h2>우리의 프로젝트</h2>
-                <!-- 프로젝트 목록 -->
-            </section>
-            <section class="team">
-                <h2>팀 소개</h2>
-                <!-- 팀 정보 -->
-            </section>
-        `;
-    } else {
-        mainContent.innerHTML = `
-            <section class="hero">
-                <h1>🌙 MoverOn이 충전합니다</h1>
-                <p>건강한 삶과 균형을 추구하는 시간</p>
-            </section>
-            <section class="wellness">
-                <h2>워라밸 문화</h2>
-                <!-- 워라밸 관련 콘텐츠 -->
-            </section>
-            <section class="activities">
-                <h2>우리의 활동</h2>
-                <!-- 운동/취미 활동 -->
-            </section>
-        `;
+        return 'off';
     }
 }
-```
+````
+</augment_code_snippet>
+
+### 2. 다국어 지원 시스템
+
+<augment_code_snippet path="script.js" mode="EXCERPT">
+````javascript
+const TRANSLATIONS = {
+    ko: {
+        hero: {
+            title: { on: "학습과 기술의 미래를 움직입니다", ... },
+            ...
+        }
+    },
+    en: { ... }
+};
+
+function translatePage() {
+    const lang = getCurrentLanguage();
+    const elements = document.querySelectorAll('[data-i18n]');
+    elements.forEach(element => {
+        const key = element.getAttribute('data-i18n');
+        element.textContent = getNestedValue(TRANSLATIONS[lang], key);
+    });
+}
+````
+</augment_code_snippet>
+
+### 3. CSS 변수를 활용한 테마 관리
+
+<augment_code_snippet path="styles.css" mode="EXCERPT">
+````css
+:root {
+    /* ON Mode Colors */
+    --on-bg-primary: #ffffff;
+    --on-accent: #0066ff;
+
+    /* OFF Mode Colors */
+    --off-bg-primary: #0f0f23;
+    --off-accent: #9b59b6;
+}
+
+body.mode-on {
+    background-color: var(--on-bg-primary);
+}
+
+body.mode-off {
+    background-color: var(--off-bg-primary);
+}
+````
+</augment_code_snippet>
+
+### 4. 반응형 디자인
+
+<augment_code_snippet path="styles.css" mode="EXCERPT">
+````css
+/* Mobile Portrait (320px - 480px) */
+@media (max-width: 480px) {
+    .hero-title {
+        font-size: 1.5rem;
+    }
+    .btn {
+        width: 100%;
+        max-width: 280px;
+    }
+}
+
+/* Tablet (481px - 768px) */
+@media (max-width: 768px) {
+    .services-grid {
+        grid-template-columns: 1fr;
+    }
+}
+````
+</augment_code_snippet>
+
+---
 
 ## 실행 방법
 
