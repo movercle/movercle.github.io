@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="MoverOn 문의하기 - 프로젝트 상담 및 문의사항을 남겨주세요.">
+    <meta property="og:title" content="MoverOn 문의하기">
+    <meta property="og:description" content="프로젝트 상담 및 문의사항을 남겨주세요.">
+    <script type="module">
+        // Firebase 모듈 import
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        // Firebase 설정
+        const firebaseConfig = {
+            apiKey: "AIzaSyDDSda46o3IymPBZ_xq9NOmr2rmad_ZCuI",
+            authDomain: "moveron-sit.firebaseapp.com",
+            projectId: "moveron-sit",
+            storageBucket: "moveron-sit.firebasestorage.app",
+            messagingSenderId: "138498280072",
+            appId: "1:138498280072:web:755477f5d53831f42f2d3d"
+        };
+
+        // Firebase 초기화
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Firestore 저장 함수를 전역으로 노출
+        window.saveContactToFirestore = async function({ companyName, email, phone, message }) {
+            try {
+                // contacts 컬렉션에 문서 추가
+                const docRef = await addDoc(collection(db, 'contacts'), {
+                    companyName,
+                    email,
+                    phone,
+                    message,
+                    createdAt: serverTimestamp(),
+                    status: 'pending'
+                });
+
+                console.log('✅ Firestore 저장 성공! 문서 ID:', docRef.id);
+                return { success: true, id: docRef.id };
+            } catch (error) {
+                console.error('❌ Firestore 저장 실패:', error);
+                return { success: false, error: error.message };
+            }
+        };
+
+        console.log('🔥 Firebase 초기화 완료');
+    </script>
+    <title>문의하기 - MoverOn</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Language Switcher for Contact Page */
+        .contact-header-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(102, 126, 234, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 16px 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .contact-header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .contact-logo {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .language-switcher {
+            display: flex;
+            gap: 8px;
+        }
+
+        .lang-btn {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .lang-btn.active {
+            background: white;
+            color: #667eea;
+            border-color: white;
+        }
+
+        /* Contact Form Specific Styles */
+        .contact-page {
+            min-height: 100vh;
+            padding: 120px 0 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .contact-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .contact-header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .contact-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+            font-weight: 700;
+        }
+
+        .contact-header p {
+            font-size: 1.125rem;
+            opacity: 0.9;
+        }
+
+        .contact-form {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #1a1a1a;
+            font-size: 0.95rem;
+        }
+
+        .form-group label .required {
+            color: #ff4444;
+            margin-left: 4px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #0066ff;
+            box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #999;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.125rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 8px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 24px;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.3s ease;
+        }
+
+        .back-link:hover {
+            opacity: 0.8;
+        }
+
+        .success-message {
+            display: none;
+            background: #4caf50;
+            color: white;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            text-align: center;
+            animation: slideDown 0.3s ease;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .success-message small {
+            display: block;
+            margin-top: 8px;
+            opacity: 0.9;
+            font-size: 0.85rem;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .contact-page {
+                padding: 100px 0 60px;
+            }
+
+            .contact-header h1 {
+                font-size: 2rem;
+            }
+
+            .contact-form {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body data-lang="ko">
+    <!-- Header with Language Switcher -->
+    <div class="contact-header-bar">
+        <div class="contact-header-content">
+            <a href="index.html" class="contact-logo">MoverOn</a>
+            <div class="language-switcher">
+                <button class="lang-btn active" data-lang="ko" id="langKo">한국어</button>
+                <button class="lang-btn" data-lang="en" id="langEn">English</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="contact-page">
+        <div class="contact-container">
+            <div class="contact-header">
+                <h1 data-i18n="contact.title">📧 문의하기</h1>
+                <p data-i18n="contact.subtitle">프로젝트 상담 및 문의사항을 남겨주세요.<br>빠른 시일 내에 답변드리겠습니다.</p>
+            </div>
+
+            <div class="success-message" id="successMessage" data-i18n="contact.success">
+                ✅ 문의가 성공적으로 접수되었습니다!<br>곧 연락드리겠습니다.
+            </div>
+
+            <form class="contact-form" id="contactForm">
+                <div class="form-group">
+                    <label for="companyName">
+                        <span data-i18n="contact.form.company">업체명</span> <span class="required">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        id="companyName"
+                        name="companyName"
+                        data-i18n-placeholder="contact.form.company.placeholder"
+                        placeholder="회사명 또는 단체명을 입력해주세요"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="email">
+                        <span data-i18n="contact.form.email">이메일</span> <span class="required">*</span>
+                    </label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        data-i18n-placeholder="contact.form.email.placeholder"
+                        placeholder="example@company.com"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">
+                        <span data-i18n="contact.form.phone">연락처</span> <span class="required">*</span>
+                    </label>
+                    <input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        data-i18n-placeholder="contact.form.phone.placeholder"
+                        placeholder="010-1234-5678"
+                        pattern="[0-9]{2,3}-[0-9]{3,4}-[0-9]{4}"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="message">
+                        <span data-i18n="contact.form.message">문의 내용</span> <span class="required">*</span>
+                    </label>
+                    <textarea
+                        id="message"
+                        name="message"
+                        data-i18n-placeholder="contact.form.message.placeholder"
+                        placeholder="문의하실 내용을 자세히 작성해주세요.&#10;&#10;예시:&#10;- 프로젝트 유형 (LMS, SI, AI 등)&#10;- 예상 일정&#10;- 예산 범위&#10;- 기타 요구사항"
+                        required
+                    ></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn" data-i18n="contact.form.submit">문의 보내기</button>
+            </form>
+
+            <div style="text-align: center;">
+                <a href="index.html" class="back-link" data-i18n="contact.back">← 홈으로 돌아가기</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="contact.js"></script>
+</body>
+</html>
+

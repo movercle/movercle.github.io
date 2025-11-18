@@ -86,6 +86,29 @@ const TRANSLATIONS = {
                 off: "OFF: 오후 8:00 - 오전 8:00"
             },
             copyright: "All rights reserved."
+        },
+        contact: {
+            title: "📧 문의하기",
+            subtitle: "프로젝트 상담 및 문의사항을 남겨주세요.<br>빠른 시일 내에 답변드리겠습니다.",
+            success: "✅ 문의가 성공적으로 접수되었습니다!<br>곧 연락드리겠습니다.",
+            back: "← 홈으로 돌아가기",
+            form: {
+                company: "업체명",
+                email: "이메일",
+                phone: "연락처",
+                message: "문의 내용",
+                submit: "문의 보내기"
+            },
+            validation: {
+                required: "모든 필수 항목을 입력해주세요.",
+                email: "올바른 이메일 형식을 입력해주세요.",
+                phone: "올바른 연락처 형식을 입력해주세요. (예: 010-1234-5678)",
+                message: "문의 내용을 10자 이상 입력해주세요."
+            },
+            status: {
+                sending: "전송 중...",
+                error: "❌ 전송 중 오류가 발생했습니다.<br>잠시 후 다시 시도해주세요."
+            }
         }
     },
     en: {
@@ -160,9 +183,43 @@ const TRANSLATIONS = {
                 off: "OFF: 8:00 PM - 8:00 AM"
             },
             copyright: "All rights reserved."
+        },
+        contact: {
+            title: "📧 Contact Us",
+            subtitle: "Leave your project inquiries and questions.<br>We'll get back to you soon.",
+            success: "✅ Your inquiry has been submitted successfully!<br>We'll contact you soon.",
+            back: "← Back to Home",
+            form: {
+                company: "Company Name",
+                email: "Email",
+                phone: "Phone",
+                message: "Message",
+                submit: "Send Inquiry"
+            },
+            validation: {
+                required: "Please fill in all required fields.",
+                email: "Please enter a valid email address.",
+                phone: "Please enter a valid phone number. (e.g., 010-1234-5678)",
+                message: "Please enter at least 10 characters for your message."
+            },
+            status: {
+                sending: "Sending...",
+                error: "❌ An error occurred while sending.<br>Please try again later."
+            }
         }
     }
 };
+
+// Add placeholder translations for contact form
+TRANSLATIONS.ko.contact.form.company.placeholder = "회사명 또는 단체명을 입력해주세요";
+TRANSLATIONS.ko.contact.form.email.placeholder = "example@company.com";
+TRANSLATIONS.ko.contact.form.phone.placeholder = "010-1234-5678";
+TRANSLATIONS.ko.contact.form.message.placeholder = "문의하실 내용을 자세히 작성해주세요.\n\n예시:\n- 프로젝트 유형 (LMS, SI, AI 등)\n- 예상 일정\n- 예산 범위\n- 기타 요구사항";
+
+TRANSLATIONS.en.contact.form.company.placeholder = "Enter your company or organization name";
+TRANSLATIONS.en.contact.form.email.placeholder = "example@company.com";
+TRANSLATIONS.en.contact.form.phone.placeholder = "010-1234-5678";
+TRANSLATIONS.en.contact.form.message.placeholder = "Please describe your inquiry in detail.\n\nExample:\n- Project type (LMS, SI, AI, etc.)\n- Expected timeline\n- Budget range\n- Other requirements";
 
 /**
  * Gets a nested translation value using dot notation
@@ -443,7 +500,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const message = lang === 'ko'
                     ? '관심 가져주셔서 감사합니다! \n이 페이지 준비 중입니다.\n조만간 문의 양식을 통해 편리하게 연락하실 수 있도록 하겠습니다.'
                     : 'Thank you for your interest! \nThis page is currently under preparation.\nWe will soon provide a contact form for your convenience.';
-                alert(message);
+             //   alert(message);
+             window.location.href = 'contact.html';
             } else if (isExplore) {
                 // Scroll to services section
                 const servicesSection = document.getElementById('servicesSection');

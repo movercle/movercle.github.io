@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="MoverOn 문의 목록 관리 - Firebase 데이터 조회">
+    <title>문의 목록 관리 - MoverOn</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Page Styles */
+        .admin-page {
+            min-height: 100vh;
+            padding: 120px 0 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+            font-weight: 700;
+        }
+
+        .page-header p {
+            font-size: 1.125rem;
+            opacity: 0.9;
+        }
+
+        /* Login Form Styles */
+        .login-container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .login-form {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #1a1a1a;
+            font-size: 0.95rem;
+        }
+
+        .form-group label .required {
+            color: #ff4444;
+            margin-left: 4px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #0066ff;
+            box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.125rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 8px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Data List Styles */
+        .data-container {
+            display: none;
+        }
+
+        .data-container.show {
+            display: block;
+        }
+
+        .data-header {
+            background: white;
+            border-radius: 16px;
+            padding: 24px 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .data-info h2 {
+            font-size: 1.5rem;
+            margin: 0 0 8px 0;
+            color: #1a1a1a;
+        }
+
+        .data-info p {
+            margin: 0;
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .logout-btn {
+            padding: 12px 24px;
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #d32f2f;
+            transform: translateY(-2px);
+        }
+
+        .data-table-container {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        .data-table thead {
+            background: #f5f5f5;
+        }
+
+        .data-table th {
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #1a1a1a;
+            border-bottom: 2px solid #e0e0e0;
+            font-size: 0.95rem;
+        }
+
+        .data-table td {
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .data-table tbody tr:hover {
+            background: #f9f9f9;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .message-cell {
+            max-width: 300px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .message-cell:hover {
+            white-space: normal;
+            word-break: break-word;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .error-message,
+        .success-message {
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            text-align: center;
+            animation: slideDown 0.3s ease;
+        }
+
+        .error-message {
+            background: #f44336;
+            color: white;
+        }
+
+        .success-message {
+            background: #4caf50;
+            color: white;
+        }
+
+        .message-hide {
+            display: none;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .admin-page {
+                padding: 100px 0 60px;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
+            .login-form,
+            .data-table-container {
+                padding: 24px 20px;
+            }
+
+            .data-header {
+                padding: 20px;
+            }
+
+            .data-info h2 {
+                font-size: 1.25rem;
+            }
+
+            .data-table {
+                font-size: 0.85rem;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 12px 8px;
+            }
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 24px;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.3s ease;
+            text-align: center;
+        }
+
+        .back-link:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-page">
+        <div class="admin-container">
+            <div class="page-header">
+                <h1>📋 문의 목록 관리</h1>
+                <p>Firebase 데이터베이스에 저장된 문의 내역을 조회합니다</p>
+            </div>
+
+            <!-- Login Form -->
+            <div class="login-container" id="loginContainer">
+                <div id="loginMessage"></div>
+                <form class="login-form" id="loginForm">
+                    <div class="form-group">
+                        <label for="email">
+                            이메일 <span class="required">*</span>
+                        </label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="admin@example.com"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">
+                            비밀번호 <span class="required">*</span>
+                        </label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="비밀번호를 입력하세요"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="collectionName">
+                            컬렉션명 <span class="required">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            id="collectionName"
+                            name="collectionName"
+                            placeholder="예: contacts"
+                            value="contacts"
+                            required
+                        >
+                    </div>
+
+                    <button type="submit" class="login-btn" id="loginBtn">로그인</button>
+                </form>
+
+                <div style="text-align: center;">
+                    <a href="index.html" class="back-link">← 홈으로 돌아가기</a>
+                </div>
+            </div>
+
+            <!-- Data Display -->
+            <div class="data-container" id="dataContainer">
+                <div class="data-header">
+                    <div class="data-info">
+                        <h2 id="collectionTitle">문의 목록</h2>
+                        <p>컬렉션: <strong id="collectionNameDisplay"></strong> |
+                           총 <strong id="totalCount">0</strong>건</p>
+                    </div>
+                    <button class="logout-btn" id="logoutBtn">로그아웃</button>
+                </div>
+
+                <div class="data-table-container">
+                    <div id="loadingState" class="loading">데이터를 불러오는 중</div>
+                    <table class="data-table" id="dataTable" style="display: none;">
+                        <thead>
+                            <tr>
+                                <th>번호</th>
+                                <th>업체명</th>
+                                <th>이메일</th>
+                                <th>연락처</th>
+                                <th>문의 내용</th>
+                                <th>상태</th>
+                                <th>등록일시</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                        </tbody>
+                    </table>
+                    <div id="emptyState" class="empty-state" style="display: none;">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <p>데이터가 없습니다</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Firebase 모듈 import
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, query, orderBy, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        // Firebase 설정
+        const firebaseConfig = {
+            apiKey: "AIzaSyDDSda46o3IymPBZ_xq9NOmr2rmad_ZCuI",
+            authDomain: "moveron-sit.firebaseapp.com",
+            projectId: "moveron-sit",
+            storageBucket: "moveron-sit.firebasestorage.app",
+            messagingSenderId: "138498280072",
+            appId: "1:138498280072:web:755477f5d53831f42f2d3d"
+        };
+
+        // Firebase 초기화
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // DOM 요소
+        const loginContainer = document.getElementById('loginContainer');
+        const dataContainer = document.getElementById('dataContainer');
+        const loginForm = document.getElementById('loginForm');
+        const loginBtn = document.getElementById('loginBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const loginMessage = document.getElementById('loginMessage');
+        const dataTable = document.getElementById('dataTable');
+        const tableBody = document.getElementById('tableBody');
+        const loadingState = document.getElementById('loadingState');
+        const emptyState = document.getElementById('emptyState');
+        const collectionNameDisplay = document.getElementById('collectionNameDisplay');
+        const totalCount = document.getElementById('totalCount');
+
+        // 로그인 상태 관리
+        let isLoggedIn = false;
+        let currentCollectionName = '';
+        let currentUserEmail = '';
+
+        // 메시지 표시 함수
+        function showMessage(message, isError = false) {
+            loginMessage.innerHTML = `<div class="${isError ? 'error-message' : 'success-message'}">${message}</div>`;
+            setTimeout(() => {
+                loginMessage.innerHTML = '';
+            }, 5000);
+        }
+
+        // 로그인 폼 제출
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const collectionName = document.getElementById('collectionName').value.trim();
+
+            if (!email || !password || !collectionName) {
+                showMessage('모든 필드를 입력해주세요.', true);
+                return;
+            }
+
+            loginBtn.textContent = '로그인 중...';
+            loginBtn.disabled = true;
+
+            try {
+                // admin 컬렉션에서 loginid가 입력된 email과 일치하는 데이터 조회
+                const q = query(collection(db, 'admin'), where('loginid', '==', email));
+                const querySnapshot = await getDocs(q);
+
+                if (querySnapshot.empty) {
+                    showMessage('등록되지 않은 사용자입니다.', true);
+                    loginBtn.textContent = '로그인';
+                    loginBtn.disabled = false;
+                    return;
+                }
+
+                // 첫 번째 매칭되는 문서 가져오기
+                const adminDoc = querySnapshot.docs[0];
+                const adminData = adminDoc.data();
+
+                // 비밀번호 검증
+                if (adminData.pw !== password) {
+                    showMessage('비밀번호가 올바르지 않습니다.', true);
+                    loginBtn.textContent = '로그인';
+                    loginBtn.disabled = false;
+                    return;
+                }
+
+                // 로그인 성공
+                console.log('로그인 성공:', email);
+                isLoggedIn = true;
+                currentUserEmail = email;
+                currentCollectionName = collectionName;
+
+                // UI 전환
+                loginContainer.style.display = 'none';
+                dataContainer.classList.add('show');
+
+                // 데이터 로드
+                await loadData(currentCollectionName);
+
+            } catch (error) {
+                console.error('로그인 실패:', error);
+                showMessage('로그인 처리 중 오류가 발생했습니다: ' + error.message, true);
+                loginBtn.textContent = '로그인';
+                loginBtn.disabled = false;
+            }
+        });
+
+        // 로그아웃
+        logoutBtn.addEventListener('click', () => {
+            // 로그인 상태 초기화
+            isLoggedIn = false;
+            currentUserEmail = '';
+            currentCollectionName = '';
+
+            // UI 전환
+            dataContainer.classList.remove('show');
+            loginContainer.style.display = 'block';
+
+            // 폼 및 테이블 초기화
+            loginForm.reset();
+            loginBtn.textContent = '로그인';
+            loginBtn.disabled = false;
+            tableBody.innerHTML = '';
+            dataTable.style.display = 'none';
+            loadingState.style.display = 'none';
+            emptyState.style.display = 'none';
+
+            console.log('로그아웃 완료');
+        });
+
+        // 데이터 로드
+        async function loadData(collectionName) {
+            if (!collectionName) {
+                showMessage('컬렉션명이 지정되지 않았습니다.', true);
+                return;
+            }
+
+            collectionNameDisplay.textContent = collectionName;
+            loadingState.style.display = 'block';
+            dataTable.style.display = 'none';
+            emptyState.style.display = 'none';
+            tableBody.innerHTML = '';
+
+            try {
+                // Firestore에서 데이터 가져오기
+                const q = query(collection(db, collectionName), orderBy('createdAt', 'desc'));
+                const querySnapshot = await getDocs(q);
+
+                loadingState.style.display = 'none';
+
+                if (querySnapshot.empty) {
+                    emptyState.style.display = 'block';
+                    totalCount.textContent = '0';
+                    return;
+                }
+
+                // 테이블에 데이터 표시
+                let rowIndex = 1;
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const row = createTableRow(rowIndex++, doc.id, data);
+                    tableBody.appendChild(row);
+                });
+
+                dataTable.style.display = 'table';
+                totalCount.textContent = querySnapshot.size;
+
+            } catch (error) {
+                console.error('데이터 로드 실패:', error);
+                loadingState.style.display = 'none';
+                emptyState.style.display = 'block';
+                emptyState.innerHTML = `
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <p>데이터를 불러오는 중 오류가 발생했습니다</p>
+                    <small style="color: #999;">${error.message}</small>
+                `;
+            }
+        }
+
+        // 테이블 행 생성
+        function createTableRow(index, docId, data) {
+            const row = document.createElement('tr');
+
+            // 날짜 포맷팅
+            let createdAt = '-';
+            if (data.createdAt) {
+                try {
+                    const date = data.createdAt.toDate();
+                    createdAt = new Intl.DateTimeFormat('ko-KR', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    }).format(date);
+                } catch (e) {
+                    console.error('날짜 변환 오류:', e);
+                }
+            }
+
+            // 상태 배지
+            const status = data.status || 'pending';
+            const statusClass = status === 'completed' ? 'status-completed' : 'status-pending';
+            const statusText = status === 'completed' ? '완료' : '대기중';
+
+            row.innerHTML = `
+                <td>${index}</td>
+                <td>${data.companyName || '-'}</td>
+                <td>${data.email || '-'}</td>
+                <td>${data.phone || '-'}</td>
+                <td class="message-cell" title="${(data.message || '-').replace(/"/g, '&quot;')}">${data.message || '-'}</td>
+                <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                <td>${createdAt}</td>
+            `;
+
+            return row;
+        }
+
+        console.log('🔥 Firebase 초기화 완료 - admin 컬렉션 기반 로그인 시스템');
+    </script>
+</body>
+</html>

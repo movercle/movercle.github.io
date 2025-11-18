@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>문의 폼 테스트 - MoverOn</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .test-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #667eea;
+        }
+        h2 {
+            color: #333;
+            font-size: 1.2rem;
+            margin-top: 0;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        #console-log {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #666;
+            padding-left: 10px;
+        }
+        .log-entry.success {
+            border-color: #4caf50;
+            color: #4caf50;
+        }
+        .log-entry.error {
+            border-color: #f44336;
+            color: #f44336;
+        }
+        .log-entry.info {
+            border-color: #2196f3;
+            color: #2196f3;
+        }
+        iframe {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 MoverOn 문의 폼 테스트 페이지</h1>
+    
+    <div class="test-panel">
+        <h2>📊 Firebase 연결 상태</h2>
+        <div id="firebase-status" class="status info">확인 중...</div>
+        
+        <h2>🔧 테스트 도구</h2>
+        <button onclick="testFirebaseConnection()">Firebase 연결 테스트</button>
+        <button onclick="testFormSubmit()">샘플 데이터 전송</button>
+        <button onclick="clearConsole()">콘솔 지우기</button>
+        <button onclick="openContactPage()">문의 페이지 열기</button>
+    </div>
+
+    <div class="test-container">
+        <div class="test-panel">
+            <h2>📝 문의 폼 미리보기</h2>
+            <iframe src="contact.html" id="contactFrame"></iframe>
+        </div>
+        
+        <div class="test-panel">
+            <h2>🖥️ 콘솔 로그</h2>
+            <div id="console-log"></div>
+        </div>
+    </div>
+
+    <script>
+        const consoleLog = document.getElementById('console-log');
+        const firebaseStatus = document.getElementById('firebase-status');
+
+        // 콘솔 로그 캡처
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+
+        function addLog(message, type = 'info') {
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            consoleLog.appendChild(entry);
+            consoleLog.scrollTop = consoleLog.scrollHeight;
+        }
+
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addLog(args.join(' '), 'info');
+        };
+
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addLog('ERROR: ' + args.join(' '), 'error');
+        };
+
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            addLog('WARN: ' + args.join(' '), 'info');
+        };
+
+        // Firebase 연결 테스트
+        async function testFirebaseConnection() {
+            addLog('Firebase 연결 테스트 시작...', 'info');
+            
+            try {
+                const iframe = document.getElementById('contactFrame');
+                const iframeWindow = iframe.contentWindow;
+                
+                if (typeof iframeWindow.saveContactToFirestore === 'function') {
+                    firebaseStatus.className = 'status success';
+                    firebaseStatus.textContent = '✅ Firebase 연결 성공!';
+                    addLog('✅ Firebase 함수 접근 가능', 'success');
+                } else {
+                    throw new Error('Firebase 함수를 찾을 수 없습니다.');
+                }
+            } catch (error) {
+                firebaseStatus.className = 'status error';
+                firebaseStatus.textContent = '❌ Firebase 연결 실패: ' + error.message;
+                addLog('❌ Firebase 연결 실패: ' + error.message, 'error');
+            }
+        }
+
+        // 샘플 데이터 전송 테스트
+        function testFormSubmit() {
+            addLog('샘플 데이터 전송 테스트...', 'info');
+            
+            const iframe = document.getElementById('contactFrame');
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            
+            // 폼 필드 채우기
+            iframeDoc.getElementById('companyName').value = '테스트 회사';
+            iframeDoc.getElementById('email').value = 'test@example.com';
+            iframeDoc.getElementById('phone').value = '010-1234-5678';
+            iframeDoc.getElementById('message').value = '이것은 테스트 메시지입니다. 자동으로 생성된 샘플 데이터입니다.';
+            
+            addLog('폼 필드 채우기 완료', 'success');
+            addLog('수동으로 "문의 보내기" 버튼을 클릭하세요.', 'info');
+        }
+
+        // 콘솔 지우기
+        function clearConsole() {
+            consoleLog.innerHTML = '';
+            addLog('콘솔이 초기화되었습니다.', 'info');
+        }
+
+        // 문의 페이지 새 탭에서 열기
+        function openContactPage() {
+            window.open('contact.html', '_blank');
+            addLog('문의 페이지를 새 탭에서 열었습니다.', 'info');
+        }
+
+        // 페이지 로드 시 자동 테스트
+        window.addEventListener('load', () => {
+            addLog('테스트 페이지 로드 완료', 'success');
+            
+            setTimeout(() => {
+                testFirebaseConnection();
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
+
