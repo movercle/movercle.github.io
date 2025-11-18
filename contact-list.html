@@ -448,15 +448,24 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getFirestore, collection, getDocs, query, orderBy, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-        // Firebase 설정
-        const firebaseConfig = {
-            apiKey: "AIzaSyDDSda46o3IymPBZ_xq9NOmr2rmad_ZCuI",
-            authDomain: "moveron-sit.firebaseapp.com",
-            projectId: "moveron-sit",
-            storageBucket: "moveron-sit.firebasestorage.app",
-            messagingSenderId: "138498280072",
-            appId: "1:138498280072:web:755477f5d53831f42f2d3d"
-        };
+        // Firebase 설정 모듈 import
+        import { getFirebaseConfig, validateConfig, getEnvironmentInfo } from "./firebase-config.js";
+
+        // Firebase 설정 가져오기
+        const firebaseConfig = getFirebaseConfig();
+
+        // 설정 유효성 검사
+        if (!validateConfig(firebaseConfig)) {
+            console.error('❌ Firebase 설정이 올바르지 않습니다.');
+            alert('Firebase 설정 오류가 발생했습니다. 관리자에게 문의하세요.');
+            throw new Error('Invalid Firebase configuration');
+        }
+
+        // 환경 정보 출력 (개발 모드에서만)
+        const envInfo = getEnvironmentInfo();
+        if (envInfo.environment === 'development') {
+            console.log('🔧 현재 환경:', envInfo);
+        }
 
         // Firebase 초기화
         const app = initializeApp(firebaseConfig);

@@ -104,18 +104,23 @@ MoverOn 홈페이지는 시간대에 따라 자동으로 테마와 콘텐츠가 
 
 ```
 movercle.github.io/
-├── index.html              # 메인 HTML 파일
-├── styles.css              # 통합 스타일시트 (ON/OFF 모드 포함)
-├── script.js               # 메인 JavaScript (모드 전환, i18n, 애니메이션)
-├── contact.html            # 문의 폼 페이지 (Firebase 연동)
-├── contact.js              # 문의 폼 핸들러 (다국어 지원)
-├── contact-list.html       # 문의 목록 관리 페이지 (관리자용)
-├── contact-test.html       # 문의 폼 테스트 페이지
-├── favicon.ico             # 파비콘
-├── CNAME                   # 커스텀 도메인 설정
+├── index.html                      # 메인 HTML 파일
+├── styles.css                      # 통합 스타일시트 (ON/OFF 모드 포함)
+├── script.js                       # 메인 JavaScript (모드 전환, i18n, 애니메이션)
+├── contact.html                    # 문의 폼 페이지 (Firebase 연동)
+├── contact.js                      # 문의 폼 핸들러 (다국어 지원)
+├── contact-list.html               # 문의 목록 관리 페이지 (관리자용)
+├── contact-test.html               # 문의 폼 테스트 페이지
+├── firebase-config.js              # Firebase 설정 관리 모듈 (보안)
+├── encode-firebase-config.html     # Firebase 설정 인코더 도구
+├── .env.example                    # 환경 변수 템플릿
+├── .gitignore                      # Git 제외 파일 목록
+├── FIREBASE_SECURITY.md            # Firebase 보안 가이드
+├── favicon.ico                     # 파비콘
+├── CNAME                           # 커스텀 도메인 설정
 ├── images/
-│   └── og-image.jpg        # Open Graph 이미지 (소셜 미디어 공유)
-└── README.md               # 프로젝트 문서 (이 파일)
+│   └── og-image.jpg                # Open Graph 이미지 (소셜 미디어 공유)
+└── README.md                       # 프로젝트 문서 (이 파일)
 ```
 
 ---
@@ -168,18 +173,32 @@ movercle.github.io/
    - Firestore Database 메뉴에서 데이터베이스 생성
    - 테스트 모드로 시작 (나중에 보안 규칙 설정)
 
-3. **Firebase 설정 정보 업데이트**
-   - `contact.html` 파일의 `firebaseConfig` 객체를 본인의 설정으로 변경
-   ```javascript
-   const firebaseConfig = {
-       apiKey: "YOUR_API_KEY",
-       authDomain: "YOUR_PROJECT.firebaseapp.com",
-       projectId: "YOUR_PROJECT_ID",
-       // ...
-   };
+3. **Firebase 설정 정보 인코딩** (보안 강화)
+
+   **방법 1: 인코더 도구 사용 (권장)**
+   ```bash
+   # 브라우저에서 열기
+   open encode-firebase-config.html
+   ```
+   - Firebase Console에서 설정 정보 복사
+   - 인코더 도구에 입력
+   - 생성된 Base64 인코딩 값을 `firebase-config.js`에 복사
+
+   **방법 2: 환경 변수 사용**
+   ```bash
+   # .env.example을 복사하여 .env 파일 생성
+   cp .env.example .env
+
+   # .env 파일에 실제 Firebase 설정 입력
+   FIREBASE_API_KEY=your_api_key
+   FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+   # ...
    ```
 
 4. **보안 규칙 설정** (프로덕션 배포 전 필수)
+
+   상세한 보안 설정은 [FIREBASE_SECURITY.md](./FIREBASE_SECURITY.md) 참고
+
    ```javascript
    rules_version = '2';
    service cloud.firestore {
@@ -188,11 +207,16 @@ movercle.github.io/
          allow create: if request.resource.data.keys().hasAll([
            'companyName', 'email', 'phone', 'message'
          ]);
-         allow read: if false;  // 일반 사용자는 읽기 불가
+         allow read: if request.auth != null;  // 인증된 사용자만
        }
      }
    }
    ```
+
+5. **도메인 제한 설정**
+   - Firebase Console → 프로젝트 설정 → 승인된 도메인
+   - `www.moveron.co.kr` 추가
+   - Google Cloud Console에서 API 키에 HTTP 리퍼러 제한 설정
 
 ### 배포
 
@@ -297,26 +321,41 @@ body.mode-off {
 ````
 </augment_code_snippet>
 
-### 5. Firebase 문의 폼 연동
+### 5. Firebase 문의 폼 연동 (보안 강화)
+
+<augment_code_snippet path="firebase-config.js" mode="EXCERPT">
+````javascript
+// Firebase 설정 모듈 (보안)
+export function getFirebaseConfig() {
+    const env = getEnvironment();
+    const encodedConfig = ENCODED_CONFIG[env];
+
+    // Base64 디코딩하여 설정 반환
+    return {
+        apiKey: decodeConfig(encodedConfig.apiKey),
+        authDomain: decodeConfig(encodedConfig.authDomain),
+        // ...
+    };
+}
+````
+</augment_code_snippet>
 
 <augment_code_snippet path="contact.html" mode="EXCERPT">
 ````javascript
-// Firebase 모듈 import
-import { initializeApp } from "firebase-app.js";
-import { getFirestore, collection, addDoc } from "firebase-firestore.js";
+// Firebase 설정 모듈 import
+import { getFirebaseConfig, validateConfig } from "./firebase-config.js";
+
+// 안전하게 설정 가져오기
+const firebaseConfig = getFirebaseConfig();
+
+// 유효성 검사
+if (!validateConfig(firebaseConfig)) {
+    throw new Error('Invalid Firebase configuration');
+}
 
 // Firebase 초기화
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
-// 문의 데이터 저장
-window.saveContactToFirestore = async function(data) {
-    const docRef = await addDoc(collection(db, 'contacts'), {
-        ...data,
-        createdAt: serverTimestamp()
-    });
-    return { success: true, id: docRef.id };
-};
 ````
 </augment_code_snippet>
 
@@ -521,17 +560,41 @@ const TRANSLATIONS = {
 
 ### Firebase 프로젝트 변경
 
-본인의 Firebase 프로젝트를 사용하려면 `contact.html` 파일을 수정하세요:
+본인의 Firebase 프로젝트를 사용하려면 `firebase-config.js` 파일을 수정하세요:
 
+**방법 1: 인코더 도구 사용 (권장)**
+```bash
+# 브라우저에서 인코더 도구 열기
+open encode-firebase-config.html
+
+# 1. Firebase Console에서 설정 복사
+# 2. 인코더 도구에 입력
+# 3. 생성된 Base64 값을 firebase-config.js의 ENCODED_CONFIG에 복사
+```
+
+**방법 2: 직접 인코딩**
 ```javascript
-const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT.firebasestorage.app",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
-};
+// 브라우저 콘솔에서 실행
+const apiKey = "YOUR_API_KEY";
+const encoded = btoa(apiKey);
+console.log(encoded);
+
+// firebase-config.js의 ENCODED_CONFIG 업데이트
+production: {
+    apiKey: "BASE64_ENCODED_VALUE",
+    // ...
+}
+```
+
+**방법 3: 환경 변수 사용**
+```bash
+# .env 파일 생성
+cp .env.example .env
+
+# .env 파일에 실제 값 입력
+FIREBASE_API_KEY=YOUR_API_KEY
+FIREBASE_AUTH_DOMAIN=YOUR_PROJECT.firebaseapp.com
+# ...
 ```
 
 ### 문의 폼 필드 추가
@@ -635,6 +698,8 @@ npx lighthouse https://www.moveron.co.kr --only-categories=accessibility
 
 #### 문의 폼 (contact.html)
 - [ ] Firebase 연결 확인 (콘솔에서 "🔥 Firebase 초기화 완료" 메시지)
+- [ ] Firebase 설정 유효성 검사 확인
+- [ ] 환경 자동 감지 확인 (production/development)
 - [ ] 폼 유효성 검사 테스트 (빈 필드, 잘못된 이메일/전화번호)
 - [ ] 전화번호 자동 포맷팅 확인
 - [ ] 한국어/영어 폼 전환 테스트
@@ -644,11 +709,95 @@ npx lighthouse https://www.moveron.co.kr --only-categories=accessibility
 - [ ] 모바일 반응형 확인
 
 #### 관리자 페이지 (contact-list.html)
+- [ ] Firebase 설정 로드 확인
 - [ ] 로그인 기능 테스트
 - [ ] 문의 목록 조회 확인
 - [ ] 상태 변경 기능 테스트
 - [ ] 검색/필터 기능 확인
 - [ ] 엑셀 내보내기 테스트
+
+#### 보안 테스트
+- [ ] `.env` 파일이 Git에 커밋되지 않는지 확인
+- [ ] Firebase 보안 규칙 적용 확인
+- [ ] 도메인 제한 설정 확인
+- [ ] API 키 HTTP 리퍼러 제한 확인
+- [ ] 비인증 사용자의 데이터 읽기 차단 확인
+
+---
+
+## 🔐 보안 기능
+
+### Firebase 설정 보안
+
+#### 1. **설정 파일 분리**
+- Firebase 설정을 `firebase-config.js`로 분리
+- HTML 파일에 직접 노출되지 않음
+- 모듈 방식으로 안전하게 import
+
+#### 2. **Base64 인코딩**
+- 설정 값을 Base64로 인코딩하여 저장
+- 기본적인 난독화 제공
+- `encode-firebase-config.html` 도구로 쉽게 인코딩
+
+#### 3. **환경 변수 지원**
+- `.env` 파일을 통한 설정 관리
+- 프로덕션/개발 환경 자동 분리
+- 서버 사이드 환경 변수 우선 사용
+
+#### 4. **자동 환경 감지**
+```javascript
+// 도메인 기반 자동 환경 감지
+www.moveron.co.kr → production
+localhost → development
+```
+
+#### 5. **설정 유효성 검사**
+- 필수 필드 자동 검증
+- 잘못된 설정 시 에러 발생
+- 개발 모드에서 상세 로그 출력
+
+### Firestore 보안 규칙
+
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /contacts/{document} {
+      // ✅ 쓰기: 필수 필드 검증
+      allow create: if request.resource.data.keys().hasAll([
+        'companyName', 'email', 'phone', 'message'
+      ]) && request.resource.data.message.size() >= 10;
+
+      // ✅ 읽기: 관리자만
+      allow read: if request.auth != null
+        && request.auth.token.admin == true;
+
+      // ❌ 삭제: 금지
+      allow delete: if false;
+    }
+  }
+}
+```
+
+### 도메인 제한
+
+#### Firebase Console 설정
+- `www.moveron.co.kr` 승인
+- `localhost` (개발용만)
+
+#### Google Cloud Console 설정
+- API 키에 HTTP 리퍼러 제한
+- 허용 도메인만 API 사용 가능
+
+### Git 보안
+
+`.gitignore`로 민감한 정보 보호:
+```
+.env
+.env.local
+.firebase/
+firebase-debug.log
+```
 
 ---
 
@@ -738,8 +887,7 @@ http://localhost:8000/contact-test.html
 
 ### 프로젝트 문서
 
-- **[content.md](./content.md)**: 초기 콘텐츠 기획 아이디어
-- **[DESIGN_CONCEPT.md](./DESIGN_CONCEPT.md)**: 상세 디자인 컨셉 및 철학
+- **[FIREBASE_SECURITY.md](./FIREBASE_SECURITY.md)**: Firebase 보안 설정 가이드 ⭐ **필독**
 
 ### 외부 참고 자료
 
