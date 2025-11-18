@@ -342,6 +342,125 @@
         .back-link:hover {
             opacity: 0.8;
         }
+
+        /* Search Filter Styles */
+        .search-filters {
+            background: white;
+            border-radius: 16px;
+            padding: 24px 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-filters h3 {
+            margin: 0 0 16px 0;
+            font-size: 1.125rem;
+            color: #1a1a1a;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #1a1a1a;
+            font-size: 0.9rem;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .filter-btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .filter-btn-secondary {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .filter-btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        /* Status Dropdown */
+        .status-select {
+            padding: 4px 8px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .status-select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .status-select.status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-select.status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-select.status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
     </style>
 </head>
 <body>
@@ -410,9 +529,38 @@
                     <div class="data-info">
                         <h2 id="collectionTitle">문의 목록</h2>
                         <p>컬렉션: <strong id="collectionNameDisplay"></strong> |
-                           총 <strong id="totalCount">0</strong>건</p>
+                           총 <strong id="totalCount">0</strong>건 |
+                           필터링: <strong id="filteredCount">0</strong>건</p>
                     </div>
                     <button class="logout-btn" id="logoutBtn">로그아웃</button>
+                </div>
+
+                <!-- Search Filters -->
+                <div class="search-filters">
+                    <h3>🔍 검색 및 필터</h3>
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label for="searchCompany">업체명 검색</label>
+                            <input
+                                type="text"
+                                id="searchCompany"
+                                placeholder="업체명을 입력하세요"
+                            >
+                        </div>
+                        <div class="filter-group">
+                            <label for="filterStatus">상태 필터</label>
+                            <select id="filterStatus">
+                                <option value="">전체</option>
+                                <option value="pending">대기중</option>
+                                <option value="completed">완료</option>
+                                <option value="cancelled">취소</option>
+                            </select>
+                        </div>
+                        <div class="filter-actions">
+                            <button class="filter-btn filter-btn-primary" id="applyFilterBtn">검색</button>
+                            <button class="filter-btn filter-btn-secondary" id="resetFilterBtn">초기화</button>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="data-table-container">
@@ -427,6 +575,7 @@
                                 <th>문의 내용</th>
                                 <th>상태</th>
                                 <th>등록일시</th>
+                                <th>작업</th>
                             </tr>
                         </thead>
                         <tbody id="tableBody">
@@ -446,7 +595,7 @@
     <script type="module">
         // Firebase 모듈 import
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, orderBy, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, query, orderBy, where, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
         // Firebase 설정 모듈 import
         import { getFirebaseConfig, validateConfig, getEnvironmentInfo } from "./firebase-config.js";
@@ -484,11 +633,20 @@
         const emptyState = document.getElementById('emptyState');
         const collectionNameDisplay = document.getElementById('collectionNameDisplay');
         const totalCount = document.getElementById('totalCount');
+        const filteredCount = document.getElementById('filteredCount');
+        const searchCompany = document.getElementById('searchCompany');
+        const filterStatus = document.getElementById('filterStatus');
+        const applyFilterBtn = document.getElementById('applyFilterBtn');
+        const resetFilterBtn = document.getElementById('resetFilterBtn');
 
         // 로그인 상태 관리
         let isLoggedIn = false;
         let currentCollectionName = '';
         let currentUserEmail = '';
+
+        // 데이터 관리
+        let allData = []; // 전체 데이터
+        let filteredData = []; // 필터링된 데이터
 
         // 메시지 표시 함수
         function showMessage(message, isError = false) {
@@ -605,19 +763,27 @@
                 if (querySnapshot.empty) {
                     emptyState.style.display = 'block';
                     totalCount.textContent = '0';
+                    filteredCount.textContent = '0';
+                    allData = [];
+                    filteredData = [];
                     return;
                 }
 
-                // 테이블에 데이터 표시
-                let rowIndex = 1;
+                // 데이터 저장
+                allData = [];
                 querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    const row = createTableRow(rowIndex++, doc.id, data);
-                    tableBody.appendChild(row);
+                    allData.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
                 });
 
-                dataTable.style.display = 'table';
-                totalCount.textContent = querySnapshot.size;
+                // 초기에는 전체 데이터 표시
+                filteredData = [...allData];
+                renderTable();
+
+                totalCount.textContent = allData.length;
+                filteredCount.textContent = filteredData.length;
 
             } catch (error) {
                 console.error('데이터 로드 실패:', error);
@@ -633,9 +799,37 @@
             }
         }
 
+        // 테이블 렌더링
+        function renderTable() {
+            tableBody.innerHTML = '';
+
+            if (filteredData.length === 0) {
+                dataTable.style.display = 'none';
+                emptyState.style.display = 'block';
+                emptyState.innerHTML = `
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <p>검색 결과가 없습니다</p>
+                `;
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            dataTable.style.display = 'table';
+
+            filteredData.forEach((item, index) => {
+                const row = createTableRow(index + 1, item.id, item);
+                tableBody.appendChild(row);
+            });
+
+            filteredCount.textContent = filteredData.length;
+        }
+
         // 테이블 행 생성
         function createTableRow(index, docId, data) {
             const row = document.createElement('tr');
+            row.setAttribute('data-doc-id', docId);
 
             // 날짜 포맷팅
             let createdAt = '-';
@@ -654,10 +848,13 @@
                 }
             }
 
-            // 상태 배지
+            // 상태
             const status = data.status || 'pending';
-            const statusClass = status === 'completed' ? 'status-completed' : 'status-pending';
-            const statusText = status === 'completed' ? '완료' : '대기중';
+            const statusText = {
+                'pending': '대기중',
+                'completed': '완료',
+                'cancelled': '취소'
+            };
 
             row.innerHTML = `
                 <td>${index}</td>
@@ -665,12 +862,114 @@
                 <td>${data.email || '-'}</td>
                 <td>${data.phone || '-'}</td>
                 <td class="message-cell" title="${(data.message || '-').replace(/"/g, '&quot;')}">${data.message || '-'}</td>
-                <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                <td>
+                    <select class="status-select status-${status}" data-doc-id="${docId}" data-current-status="${status}">
+                        <option value="pending" ${status === 'pending' ? 'selected' : ''}>대기중</option>
+                        <option value="completed" ${status === 'completed' ? 'selected' : ''}>완료</option>
+                        <option value="cancelled" ${status === 'cancelled' ? 'selected' : ''}>취소</option>
+                    </select>
+                </td>
                 <td>${createdAt}</td>
+                <td>
+                    <button class="filter-btn filter-btn-primary" style="padding: 6px 12px; font-size: 0.85rem;" onclick="updateStatus('${docId}', this.closest('tr'))">
+                        저장
+                    </button>
+                </td>
             `;
 
             return row;
         }
+
+        // 필터 적용
+        function applyFilters() {
+            const companySearch = searchCompany.value.toLowerCase().trim();
+            const statusFilter = filterStatus.value;
+
+            filteredData = allData.filter(item => {
+                // 업체명 검색
+                const matchCompany = !companySearch ||
+                    (item.companyName && item.companyName.toLowerCase().includes(companySearch));
+
+                // 상태 필터
+                const matchStatus = !statusFilter || item.status === statusFilter;
+
+                return matchCompany && matchStatus;
+            });
+
+            renderTable();
+        }
+
+        // 필터 초기화
+        function resetFilters() {
+            searchCompany.value = '';
+            filterStatus.value = '';
+            filteredData = [...allData];
+            renderTable();
+        }
+
+        // 상태 업데이트 (전역 함수로 만들어 onclick에서 호출 가능)
+        window.updateStatus = async function(docId, rowElement) {
+            const selectElement = rowElement.querySelector('.status-select');
+            const newStatus = selectElement.value;
+            const currentStatus = selectElement.getAttribute('data-current-status');
+
+            // 변경사항이 없으면 리턴
+            if (newStatus === currentStatus) {
+                alert('변경된 내용이 없습니다.');
+                return;
+            }
+
+            // 확인 메시지
+            if (!confirm(`상태를 "${newStatus === 'pending' ? '대기중' : newStatus === 'completed' ? '완료' : '취소'}"(으)로 변경하시겠습니까?`)) {
+                // 취소 시 원래 값으로 복원
+                selectElement.value = currentStatus;
+                return;
+            }
+
+            try {
+                // Firebase에서 상태 업데이트
+                const docRef = doc(db, currentCollectionName, docId);
+                await updateDoc(docRef, {
+                    status: newStatus,
+                    updatedAt: new Date()
+                });
+
+                // 로컬 데이터 업데이트
+                const dataIndex = allData.findIndex(item => item.id === docId);
+                if (dataIndex !== -1) {
+                    allData[dataIndex].status = newStatus;
+                }
+
+                const filteredIndex = filteredData.findIndex(item => item.id === docId);
+                if (filteredIndex !== -1) {
+                    filteredData[filteredIndex].status = newStatus;
+                }
+
+                // UI 업데이트
+                selectElement.setAttribute('data-current-status', newStatus);
+                selectElement.className = `status-select status-${newStatus}`;
+
+                alert('상태가 성공적으로 변경되었습니다.');
+                console.log(`문서 ${docId} 상태 변경: ${currentStatus} → ${newStatus}`);
+
+            } catch (error) {
+                console.error('상태 업데이트 실패:', error);
+                alert('상태 변경 중 오류가 발생했습니다: ' + error.message);
+                // 실패 시 원래 값으로 복원
+                selectElement.value = currentStatus;
+            }
+        };
+
+        // 이벤트 리스너 등록
+        applyFilterBtn.addEventListener('click', applyFilters);
+        resetFilterBtn.addEventListener('click', resetFilters);
+
+        // Enter 키로 검색
+        searchCompany.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                applyFilters();
+            }
+        });
 
         console.log('🔥 Firebase 초기화 완료 - admin 컬렉션 기반 로그인 시스템');
     </script>
