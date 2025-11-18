@@ -53,6 +53,15 @@ MoverOn 홈페이지는 시간대에 따라 자동으로 테마와 콘텐츠가 
 - **데스크톱**: 769px ~ 1024px+
 - **유연한 레이아웃**: 모든 화면 크기에서 최적의 경험
 
+### 📧 문의 폼 시스템
+- **Firebase Firestore 연동**: 실시간 데이터 저장
+- **다국어 지원**: 한국어/영어 폼 자동 전환
+- **유효성 검사**: 이메일, 전화번호, 필수 항목 검증
+- **자동 포맷팅**: 전화번호 하이픈 자동 입력
+- **에러 처리**: 성공/실패 메시지 표시
+- **관리자 페이지**: 문의 목록 조회 및 관리 (contact-list.html)
+- **테스트 도구**: 개발자용 테스트 페이지 (contact-test.html)
+
 ---
 
 ## 🛠 기술 스택
@@ -69,6 +78,13 @@ MoverOn 홈페이지는 시간대에 따라 자동으로 테마와 콘텐츠가 
   - 다국어 지원 (i18n)
   - 인터랙티브 애니메이션
   - LocalStorage 활용
+
+### Backend & Database
+- **Firebase**:
+  - **Firestore**: NoSQL 데이터베이스 (문의 데이터 저장)
+  - **Firebase Hosting**: 정적 사이트 호스팅 (선택 사항)
+  - **Firebase SDK v10**: 모듈 방식 사용
+- **실시간 데이터 동기화**: 문의 접수 즉시 저장
 
 ### 성능 최적화
 - **CSS Transform**: GPU 가속 애니메이션
@@ -91,12 +107,14 @@ movercle.github.io/
 ├── index.html              # 메인 HTML 파일
 ├── styles.css              # 통합 스타일시트 (ON/OFF 모드 포함)
 ├── script.js               # 메인 JavaScript (모드 전환, i18n, 애니메이션)
+├── contact.html            # 문의 폼 페이지 (Firebase 연동)
+├── contact.js              # 문의 폼 핸들러 (다국어 지원)
+├── contact-list.html       # 문의 목록 관리 페이지 (관리자용)
+├── contact-test.html       # 문의 폼 테스트 페이지
 ├── favicon.ico             # 파비콘
 ├── CNAME                   # 커스텀 도메인 설정
 ├── images/
 │   └── og-image.jpg        # Open Graph 이미지 (소셜 미디어 공유)
-├── content.md              # 콘텐츠 기획 문서
-├── DESIGN_CONCEPT.md       # 상세 디자인 컨셉 문서
 └── README.md               # 프로젝트 문서 (이 파일)
 ```
 
@@ -136,6 +154,44 @@ movercle.github.io/
 3. **브라우저에서 확인**
    ```
    http://localhost:8000
+   ```
+
+### Firebase 설정 (문의 폼 사용 시)
+
+문의 폼 기능을 사용하려면 Firebase 프로젝트 설정이 필요합니다:
+
+1. **Firebase 프로젝트 생성**
+   - [Firebase Console](https://console.firebase.google.com/) 접속
+   - 새 프로젝트 생성 또는 기존 프로젝트 선택
+
+2. **Firestore 데이터베이스 설정**
+   - Firestore Database 메뉴에서 데이터베이스 생성
+   - 테스트 모드로 시작 (나중에 보안 규칙 설정)
+
+3. **Firebase 설정 정보 업데이트**
+   - `contact.html` 파일의 `firebaseConfig` 객체를 본인의 설정으로 변경
+   ```javascript
+   const firebaseConfig = {
+       apiKey: "YOUR_API_KEY",
+       authDomain: "YOUR_PROJECT.firebaseapp.com",
+       projectId: "YOUR_PROJECT_ID",
+       // ...
+   };
+   ```
+
+4. **보안 규칙 설정** (프로덕션 배포 전 필수)
+   ```javascript
+   rules_version = '2';
+   service cloud.firestore {
+     match /databases/{database}/documents {
+       match /contacts/{document} {
+         allow create: if request.resource.data.keys().hasAll([
+           'companyName', 'email', 'phone', 'message'
+         ]);
+         allow read: if false;  // 일반 사용자는 읽기 불가
+       }
+     }
+   }
    ```
 
 ### 배포
@@ -241,6 +297,48 @@ body.mode-off {
 ````
 </augment_code_snippet>
 
+### 5. Firebase 문의 폼 연동
+
+<augment_code_snippet path="contact.html" mode="EXCERPT">
+````javascript
+// Firebase 모듈 import
+import { initializeApp } from "firebase-app.js";
+import { getFirestore, collection, addDoc } from "firebase-firestore.js";
+
+// Firebase 초기화
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// 문의 데이터 저장
+window.saveContactToFirestore = async function(data) {
+    const docRef = await addDoc(collection(db, 'contacts'), {
+        ...data,
+        createdAt: serverTimestamp()
+    });
+    return { success: true, id: docRef.id };
+};
+````
+</augment_code_snippet>
+
+<augment_code_snippet path="contact.js" mode="EXCERPT">
+````javascript
+// 폼 제출 처리
+async function submitForm(data) {
+    try {
+        const result = await window.saveContactToFirestore(data);
+        if (result.success) {
+            // 성공 메시지 표시
+            successMessage.classList.add('show');
+            contactForm.reset();
+        }
+    } catch (error) {
+        // 에러 메시지 표시
+        console.error('전송 실패:', error);
+    }
+}
+````
+</augment_code_snippet>
+
 ---
 
 ## 🎨 디자인 시스템
@@ -310,7 +408,7 @@ index.html
 ### JavaScript 모듈
 
 ```
-script.js
+script.js (메인 페이지)
 ├── Configuration
 │   ├── ON_START_HOUR: 8
 │   ├── ON_END_HOUR: 20
@@ -331,6 +429,23 @@ script.js
     ├── Scroll Reveal
     ├── Particle Effects
     └── Page Load Animation
+
+contact.js (문의 폼)
+├── Translation System
+│   ├── TRANSLATIONS (ko, en)
+│   ├── translatePage()
+│   └── updatePlaceholders()
+├── Form Validation
+│   ├── validateForm()
+│   ├── validateEmail()
+│   └── validatePhone()
+├── Form Submission
+│   ├── submitForm()
+│   └── saveContactToFirestore()
+├── Auto-formatting
+│   └── formatPhoneNumber()
+└── Language Switcher
+    └── initLanguageSwitcher()
 ```
 
 ### CSS 구조
@@ -404,6 +519,52 @@ const TRANSLATIONS = {
 };
 ```
 
+### Firebase 프로젝트 변경
+
+본인의 Firebase 프로젝트를 사용하려면 `contact.html` 파일을 수정하세요:
+
+```javascript
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT.firebasestorage.app",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+};
+```
+
+### 문의 폼 필드 추가
+
+`contact.html`과 `contact.js`를 수정하여 새로운 필드를 추가할 수 있습니다:
+
+**contact.html에 필드 추가:**
+```html
+<div class="form-group">
+    <label for="budget">
+        <span data-i18n="contact.form.budget">예산 범위</span>
+        <span class="required">*</span>
+    </label>
+    <select id="budget" name="budget" required>
+        <option value="">선택해주세요</option>
+        <option value="under-10m">1천만원 미만</option>
+        <option value="10m-50m">1천만원 ~ 5천만원</option>
+        <option value="over-50m">5천만원 이상</option>
+    </select>
+</div>
+```
+
+**contact.js에서 데이터 수집:**
+```javascript
+const formData = {
+    companyName: document.getElementById('companyName').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    phone: document.getElementById('phone').value.trim(),
+    message: document.getElementById('message').value.trim(),
+    budget: document.getElementById('budget').value  // 새 필드 추가
+};
+```
+
 ---
 
 ## 📈 성능 최적화
@@ -462,6 +623,7 @@ npx lighthouse https://www.moveron.co.kr --only-categories=accessibility
 
 ### 테스트 체크리스트
 
+#### 메인 페이지
 - [ ] 오전 8시 전후 모드 전환 확인
 - [ ] 오후 8시 전후 모드 전환 확인
 - [ ] 한국어/영어 전환 테스트
@@ -470,6 +632,105 @@ npx lighthouse https://www.moveron.co.kr --only-categories=accessibility
 - [ ] 키보드 네비게이션 테스트
 - [ ] 스크린 리더 테스트 (NVDA, VoiceOver)
 - [ ] 다양한 브라우저에서 확인
+
+#### 문의 폼 (contact.html)
+- [ ] Firebase 연결 확인 (콘솔에서 "🔥 Firebase 초기화 완료" 메시지)
+- [ ] 폼 유효성 검사 테스트 (빈 필드, 잘못된 이메일/전화번호)
+- [ ] 전화번호 자동 포맷팅 확인
+- [ ] 한국어/영어 폼 전환 테스트
+- [ ] 성공 메시지 표시 확인
+- [ ] 에러 메시지 표시 확인
+- [ ] Firestore에 데이터 저장 확인
+- [ ] 모바일 반응형 확인
+
+#### 관리자 페이지 (contact-list.html)
+- [ ] 로그인 기능 테스트
+- [ ] 문의 목록 조회 확인
+- [ ] 상태 변경 기능 테스트
+- [ ] 검색/필터 기능 확인
+- [ ] 엑셀 내보내기 테스트
+
+---
+
+## 📧 문의 폼 시스템 상세
+
+### 주요 기능
+
+#### 1. **다국어 지원**
+- 한국어/영어 자동 전환
+- 폼 레이블, 플레이스홀더, 에러 메시지 모두 번역
+- LocalStorage에 언어 설정 저장
+
+#### 2. **실시간 유효성 검사**
+- 이메일 형식 검증 (정규식)
+- 전화번호 형식 검증 (010-1234-5678)
+- 필수 항목 체크
+- 최소 글자 수 검증 (문의 내용 10자 이상)
+
+#### 3. **자동 포맷팅**
+- 전화번호 입력 시 자동 하이픈 삽입
+- 숫자만 입력 가능하도록 필터링
+
+#### 4. **Firebase Firestore 연동**
+- 실시간 데이터 저장
+- 서버 타임스탬프 자동 기록
+- 문서 ID 자동 생성
+- 에러 처리 및 재시도 로직
+
+#### 5. **사용자 피드백**
+- 전송 중 로딩 상태 표시
+- 성공 메시지 (5초 후 자동 숨김)
+- 에러 메시지 (7초 후 자동 숨김)
+- 폼 자동 리셋
+
+### 데이터 구조
+
+Firestore에 저장되는 문의 데이터 구조:
+
+```javascript
+{
+  companyName: "회사명",
+  email: "example@company.com",
+  phone: "010-1234-5678",
+  message: "문의 내용...",
+  createdAt: Timestamp,  // 서버 타임스탬프
+  status: "pending"      // pending, processing, completed
+}
+```
+
+### 관리자 페이지 (contact-list.html)
+
+#### 기능
+- 📋 **문의 목록 조회**: 실시간 데이터 동기화
+- 🔍 **검색 및 필터**: 상태별, 날짜별 필터링
+- ✏️ **상태 변경**: pending → processing → completed
+- 📊 **통계 대시보드**: 총 문의 수, 상태별 통계
+- 📥 **엑셀 내보내기**: CSV 형식으로 다운로드
+- 🔐 **로그인 인증**: 관리자만 접근 가능
+
+#### 접근 방법
+```
+https://www.moveron.co.kr/contact-list.html
+```
+
+### 테스트 페이지 (contact-test.html)
+
+개발자를 위한 테스트 도구:
+
+#### 기능
+- 🧪 Firebase 연결 상태 자동 확인
+- 📝 샘플 데이터 자동 입력
+- 🖥️ 실시간 콘솔 로그 표시
+- 🔄 iframe으로 문의 폼 미리보기
+
+#### 사용 방법
+```bash
+# 로컬 서버 실행
+python -m http.server 8000
+
+# 브라우저에서 접속
+http://localhost:8000/contact-test.html
+```
 
 ---
 
@@ -486,6 +747,8 @@ npx lighthouse https://www.moveron.co.kr --only-categories=accessibility
 - [CSS Tricks](https://css-tricks.com/)
 - [Web.dev](https://web.dev/)
 - [A11y Project](https://www.a11yproject.com/)
+- [Firebase Documentation](https://firebase.google.com/docs)
+- [Firestore Security Rules](https://firebase.google.com/docs/firestore/security/get-started)
 
 ---
 
@@ -493,11 +756,14 @@ npx lighthouse https://www.moveron.co.kr --only-categories=accessibility
 
 ### 단기 목표 (1-3개월)
 
+- [x] ~~문의 폼 백엔드 연동~~ ✅ **완료** (Firebase Firestore)
+- [x] ~~문의 폼 다국어 지원~~ ✅ **완료**
+- [ ] 문의 폼 이메일 알림 (Firebase Functions)
 - [ ] 블로그 섹션 추가
 - [ ] 프로젝트 포트폴리오 페이지
-- [ ] 문의 폼 백엔드 연동
 - [ ] Google Analytics 통합
 - [ ] 성능 모니터링 도구 추가
+- [ ] reCAPTCHA 스팸 방지
 
 ### 중기 목표 (3-6개월)
 
@@ -506,6 +772,8 @@ npx lighthouse https://www.moveron.co.kr --only-categories=accessibility
 - [ ] 팀 멤버 소개 페이지
 - [ ] 채용 페이지
 - [ ] 뉴스레터 구독 기능
+- [ ] 문의 통계 대시보드
+- [ ] 자동 응답 시스템
 
 ### 장기 목표 (6개월+)
 
@@ -514,6 +782,7 @@ npx lighthouse https://www.moveron.co.kr --only-categories=accessibility
 - [ ] 개인화된 사용자 경험
 - [ ] PWA (Progressive Web App) 전환
 - [ ] 다크모드 수동 토글 옵션
+- [ ] 실시간 채팅 지원
 
 ---
 
@@ -546,9 +815,48 @@ npx lighthouse https://www.moveron.co.kr --only-categories=accessibility
 
 - **이메일**: movercle@gmail.com
 - **웹사이트**: [www.moveron.co.kr](https://www.moveron.co.kr)
+- **문의 폼**: [www.moveron.co.kr/contact.html](https://www.moveron.co.kr/contact.html)
 - **위치**: 서울, 대한민국
 
 프로젝트 관련 문의사항이나 버그 리포트는 [GitHub Issues](https://github.com/movercle/movercle.github.io/issues)에 등록해주세요.
+
+---
+
+## 🚦 빠른 시작 가이드
+
+### 1️⃣ 메인 페이지 확인
+```
+https://www.moveron.co.kr
+```
+- 시간대별 ON/OFF 모드 자동 전환 확인
+- 한국어/영어 언어 전환 테스트
+
+### 2️⃣ 문의 폼 테스트
+```
+https://www.moveron.co.kr/contact.html
+```
+- 샘플 데이터 입력 및 전송
+- Firebase 콘솔에서 데이터 확인
+
+### 3️⃣ 관리자 페이지 접속
+```
+https://www.moveron.co.kr/contact-list.html
+```
+- 로그인 후 문의 목록 확인
+- 상태 변경 및 관리 기능 사용
+
+### 4️⃣ 개발자 테스트
+```bash
+# 저장소 클론
+git clone https://github.com/movercle/movercle.github.io.git
+cd movercle.github.io
+
+# 로컬 서버 실행
+python -m http.server 8000
+
+# 테스트 페이지 접속
+http://localhost:8000/contact-test.html
+```
 
 ---
 
